@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle of the iPad Updates — iPadOS 26</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #185FA5; --blue-l: #E6F1FB; --blue-m: #B5D4F4; --blue-d: #0C447C;
+    --green: #3B6D11; --green-l: #EAF3DE; --green-d: #27500A;
+    --amber: #BA7517; --amber-l: #FAEEDA; --amber-d: #633806;
+    --red: #A32D2D; --red-l: #FCEBEB;
+    --purple: #534AB7; --purple-l: #EEEDFE; --purple-d: #3C3489;
+    --pink: #993556; --pink-l: #FBEAF0; --pink-d: #72243E;
+    --gray-100: #F1EFE8; --gray-200: #D3D1C7; --gray-600: #5F5E5A; --gray-800: #444441; --gray-900: #2C2C2A;
+    --surface: #FFFFFF; --surface-2: #F8F7F4; --surface-3: #F1EFE8;
+    --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.18);
+    --text: #1A1A18; --text-2: #5F5E5A; --text-3: #888780;
+    --radius: 12px; --radius-sm: 8px; --radius-pill: 100px;
+    --font: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font); background: var(--surface-2); color: var(--text); min-height: 100vh; }
+
+  /* ─── Header ─── */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px; gap: 12px;
+  }
+  .logo { display: flex; align-items: center; gap: 9px; }
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #185FA5, #534AB7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .logo-sub { font-size: 11px; color: var(--text-3); font-weight: 400; }
+
+  .nav-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .ntab {
+    padding: 6px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: transparent;
+    font-family: var(--font); font-size: 12px; font-weight: 500;
+    color: var(--text-2); cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .ntab:hover:not(.active):not([disabled]) { background: var(--surface-3); color: var(--text); }
+  .ntab.active { background: var(--blue); color: white; border-color: var(--blue); }
+  .ntab[disabled] { opacity: 0.3; cursor: not-allowed; }
+
+  /* ─── Page layout ─── */
+  .page { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  /* ─── Round title bar ─── */
+  .round-bar {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;
+    padding: 10px 14px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .round-bar h2 { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
+  .round-bar .progress-dots { display: flex; gap: 5px; }
+  .pdot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); transition: background 0.2s; }
+  .pdot.done { background: var(--green); }
+  .pdot.current { background: var(--blue); }
+
+  /* ─── Creator Studio notice ─── */
+  .creator-notice {
+    background: var(--purple-l); border: 1px solid #AFA9EC;
+    border-radius: var(--radius); padding: 10px 14px;
+    font-size: 12px; color: var(--purple-d); line-height: 1.6;
+    margin-bottom: 1rem;
+    display: flex; gap: 9px; align-items: flex-start;
+  }
+  .creator-notice .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ─── Matchup grid ─── */
+  .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1rem; }
+
+  /* ─── Matchup card ─── */
+  .mcard {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column;
+  }
+  .mcard-head {
+    padding: 9px 13px; background: var(--surface-3);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .matchup-num { font-size: 11px; font-weight: 600; color: var(--text-3); font-family: var(--font-mono); }
+  .vs-pill {
+    background: var(--red-l); color: var(--red);
+    font-size: 10px; font-weight: 600; padding: 2px 8px;
+    border-radius: var(--radius-pill); margin-left: auto;
+  }
+  .mcat { font-size: 10px; color: var(--text-3); }
+
+  /* ─── Feature slot ─── */
+  .fslot {
+    padding: 13px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.1s;
+    position: relative;
+  }
+  .fslot:last-of-type { border-bottom: none; }
+  .fslot:hover { background: var(--surface-2); }
+  .fslot.selected {
+    background: var(--blue-l);
+    border-left: 3px solid var(--blue);
+    padding-left: 10px;
+  }
+  .fslot.winner {
+    background: var(--green-l);
+    border-left: 3px solid var(--green);
+    padding-left: 10px;
+  }
+
+  .f-top { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
+  .seed {
+    font-size: 10px; font-weight: 500; font-family: var(--font-mono);
+    color: var(--text-3); background: var(--surface-3);
+    border: 1px solid var(--border); padding: 2px 6px;
+    border-radius: 5px; min-width: 26px; text-align: center;
+  }
+  .ficon { font-size: 15px; }
+  .fname { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.3; }
+  .cat-pill {
+    font-size: 10px; font-weight: 500; padding: 2px 8px;
+    border-radius: var(--radius-pill);
+  }
+  .cat-AI { background: var(--blue-l); color: var(--blue-d); }
+  .cat-Productivity { background: var(--green-l); color: var(--green-d); }
+  .cat-Creative { background: var(--amber-l); color: var(--amber-d); }
+  .cat-Collaboration { background: var(--pink-l); color: var(--pink-d); }
+  .cat-Creator { background: var(--purple-l); color: var(--purple-d); }
+
+  .fdesc { font-size: 12px; color: var(--text-2); line-height: 1.6; margin-bottom: 8px; }
+
+  .fmeta { display: flex; flex-direction: column; gap: 4px; }
+  .meta-row {
+    font-size: 11px; padding: 5px 9px; border-radius: 6px; line-height: 1.5;
+  }
+  .meta-row strong { font-weight: 600; }
+  .m-find { background: var(--blue-l); color: var(--blue-d); }
+  .m-try { background: var(--amber-l); color: var(--amber-d); }
+
+  /* ─── VS divider ─── */
+  .vs-divider {
+    text-align: center; padding: 5px;
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    background: var(--surface-3);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── Discussion section ─── */
+  .discuss-sec {
+    background: var(--surface-3); border-top: 1px solid var(--border);
+    padding: 10px 13px;
+  }
+  .discuss-label {
+    font-size: 10px; font-weight: 600; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px;
+  }
+  .discuss-q { font-size: 12px; color: var(--text); line-height: 1.6; font-style: italic; }
+
+  /* ─── Vote row ─── */
+  .vote-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+    padding: 10px 13px; border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .vbtn {
+    padding: 8px 6px; border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); background: transparent;
+    font-family: var(--font); font-size: 12px; font-weight: 500;
+    color: var(--text-2); cursor: pointer; transition: all 0.15s;
+    text-align: center; line-height: 1.3;
+  }
+  .vbtn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+  .vbtn.voted { background: var(--green); color: white; border-color: var(--green); font-weight: 600; }
+
+  /* ─── Advance button ─── */
+  .adv-bar { text-align: center; margin-top: 1.5rem; }
+  .adv-btn {
+    padding: 11px 28px; background: var(--blue); color: white;
+    border: none; border-radius: var(--radius-pill);
+    font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer; box-shadow: var(--shadow);
+    transition: opacity 0.15s;
+  }
+  .adv-btn:hover { opacity: 0.88; }
+
+  /* ─── Champion view ─── */
+  .champ-view {
+    text-align: center; padding: 3rem 1.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+  .trophy-ring {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: var(--amber-l); border: 2px solid #EF9F27;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 1.25rem;
+  }
+  .champ-name { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+  .champ-sub { font-size: 13px; color: var(--text-3); margin-bottom: 1.5rem; }
+  .champ-detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    max-width: 480px; margin: 0 auto 1.5rem; text-align: left;
+  }
+  .champ-detail {
+    padding: 11px 13px; border-radius: var(--radius-sm);
+    font-size: 12px; line-height: 1.6;
+  }
+  .champ-detail strong { font-weight: 600; display: block; margin-bottom: 3px; }
+  .cd-blue { background: var(--blue-l); color: var(--blue-d); }
+  .cd-amber { background: var(--amber-l); color: var(--amber-d); }
+  .restart-btn {
+    margin-top: 1rem; padding: 9px 22px;
+    background: transparent; border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill); font-family: var(--font);
+    font-size: 13px; font-weight: 500; color: var(--text-2);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .restart-btn:hover { background: var(--surface-3); color: var(--text); }
+
+  /* ─── Locked state ─── */
+  .locked {
+    text-align: center; padding: 3rem 1rem;
+    color: var(--text-3); font-size: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .locked .lock-icon { font-size: 32px; display: block; margin-bottom: 10px; }
+
+  /* ─── Leaderboard ─── */
+  .lb-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);
+  }
+  .lb-head {
+    padding: 13px 16px; background: var(--surface-3);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .lb-head h2 { font-size: 15px; font-weight: 600; color: var(--text); }
+  .lb-head p { font-size: 12px; color: var(--text-3); }
+  .lb-row {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row:hover { background: var(--surface-2); }
+  .lb-rank { font-size: 16px; min-width: 28px; text-align: center; }
+  .lb-rank.gold { color: #BA7517; }
+  .lb-rank.silver { color: #888780; }
+  .lb-rank.bronze { color: #854F0B; }
+  .lb-rank.num { font-size: 13px; font-weight: 600; color: var(--text-3); font-family: var(--font-mono); }
+  .lb-info { flex: 1; }
+  .lb-fn { font-size: 13px; font-weight: 600; color: var(--text); }
+  .lb-fc { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .lb-wins { display: flex; gap: 4px; align-items: center; }
+  .wd { width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+  .we { width: 9px; height: 9px; border-radius: 50%; background: var(--gray-200); }
+  .lb-status {
+    font-size: 11px; font-weight: 500; padding: 3px 9px;
+    border-radius: var(--radius-pill);
+  }
+  .st-champ { background: var(--amber-l); color: var(--amber); }
+  .st-in { background: var(--green-l); color: var(--green); }
+  .st-out { background: var(--surface-3); color: var(--text-3); }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 600px) {
+    .site-header { padding: 0 1rem; }
+    .header-inner { flex-wrap: wrap; height: auto; padding: 10px 0; gap: 8px; }
+    .logo-sub { display: none; }
+    .nav-tabs { gap: 3px; }
+    .ntab { padding: 5px 10px; font-size: 11px; }
+    .mgrid { grid-template-columns: 1fr; }
+    .champ-detail-grid { grid-template-columns: 1fr; }
+    .page { padding: 1rem 0.75rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">📱</div>
+      <div>
+        <div class="logo-text">Battle of the iPad</div>
+        <div class="logo-sub">iPadOS 26 · March Madness</div>
+      </div>
+    </div>
+    <div class="nav-tabs" id="nav"></div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="round-bar">
+    <h2 id="roundTitle">Round 1 — Sweet 16</h2>
+    <div class="progress-dots" id="progressDots"></div>
+  </div>
+  <div id="main"></div>
+</main>
+
+<script>
+const features = [
+  { id:1, seed:1, icon:"✍️", name:"Apple Intelligence Writing Tools", cat:"AI",
+    desc:"AI writing assistant that rewrites, proofreads, and summarizes text anywhere you type — Mail, Notes, documents.",
+    find:"Settings → Apple Intelligence & Siri → Writing Tools → toggle on",
+    tryIt:"Select any paragraph in Notes or Mail → tap the circle menu → Writing Tools → try Rewrite or Proofread.",
+    discuss:"Which subject area benefits most from an AI writing assistant? What guardrails would you want in place for students?" },
+  { id:2, seed:16, icon:"📬", name:"Smart Reply in Mail", cat:"AI",
+    desc:"One-tap AI-suggested replies in Mail based on the email's context, generated entirely on-device.",
+    find:"Open Mail → open any email → see Smart Reply chips below the message body",
+    tryIt:"Tap a Smart Reply suggestion on a recent email, edit it to make it your own, then send.",
+    discuss:"Would Smart Reply save you time? When would you NOT want to use it?" },
+  { id:3, seed:8, icon:"😄", name:"Genmoji", cat:"Creative",
+    desc:"Generate custom emoji from a text description — type what you imagine and a unique emoji appears.",
+    find:"Any text field → emoji keyboard → tap + button → type your description",
+    tryIt:"Create a Genmoji of 'a teacher holding an iPad with a graduation cap' and drop it in a message.",
+    discuss:"How could students use Genmoji to express ideas in a lesson? Where might it get misused?" },
+  { id:4, seed:9, icon:"🎨", name:"Image Playground", cat:"Creative",
+    desc:"Generate AI images in seconds — Animation, Sketch, Illustration, or the new Watercolor style. All on iPad.",
+    find:"App Library → Image Playground → type a description → pick a style",
+    tryIt:"Create an illustration of your classroom subject — switch between Sketch, Animation, and Watercolor styles.",
+    discuss:"How might AI image generation change student visual projects? What citation questions come up?" },
+  { id:5, seed:5, icon:"📄", name:"Preview App on iPad", cat:"Productivity",
+    desc:"Preview arrives on iPad in iPadOS 26 — annotate PDFs, fill and sign forms, mark up documents and images.",
+    find:"App Library → Preview (brand new on iPad) → open any PDF or image",
+    tryIt:"Open a PDF in Preview, use AutoFill to complete a form field, add your signature using Markup.",
+    discuss:"How many forms or PDFs does your school send teachers? How does Preview change your paperless workflow?" },
+  { id:6, seed:12, icon:"📝", name:"Redesigned Notes", cat:"Productivity",
+    desc:"Live collaboration, collapsible sections, and markdown import/export — Apple Notes gets a serious upgrade.",
+    find:"Notes app → new note → use toolbar for collapsible sections; tap Share → Export to Markdown",
+    tryIt:"Create a class agenda in Notes with collapsible sections for each period — share it with a colleague via iCloud.",
+    discuss:"How does collaborative Notes compare to Google Docs for quick team planning? What would make you switch?" },
+  { id:7, seed:4, icon:"🔔", name:"Reminders with Auto-Categorize", cat:"AI",
+    desc:"Apple Intelligence suggests reminders from Mail and Safari content — tasks from emails, items from recipes — and auto-sorts them into smart sections.",
+    find:"Open Reminders → create a list → tap Auto-Categorize; watch for AI suggestions from Mail",
+    tryIt:"Forward yourself an email with action items, then open Reminders and see if Apple Intelligence suggests tasks.",
+    discuss:"Do you trust AI to pull tasks from your email? How could this change how teachers manage to-do lists?" },
+  { id:8, seed:13, icon:"🔍", name:"Siri with Screen Awareness", cat:"AI",
+    desc:"Siri can now see what's on your screen and take actions on your behalf — ask it about content you're viewing.",
+    find:"Hold top button for Siri → ask 'What's on my screen?' while viewing any content",
+    tryIt:"Open an event webpage, activate Siri, say 'Add this event to my calendar' — watch Siri read the screen and act.",
+    discuss:"What privacy concerns about screen-aware Siri would you raise with parents or your school community?" },
+  { id:9, seed:2, icon:"🧮", name:"Calculator with 3D Math Notes", cat:"Productivity",
+    desc:"iPad's native Calculator now supports 3D graphing — write an equation with three variables and watch it render as an interactive 3D graph.",
+    find:"App Library → Calculator → Math Notes tab → type an equation with three variables → tap Insert 3D Graph",
+    tryIt:"Type z=(y³+x³)/2 in Math Notes and insert the 3D graph — drag to rotate it, then change a value to see it update.",
+    discuss:"Does 3D Math Notes help students visualize concepts or does it shortcut the understanding process?" },
+  { id:10, seed:15, icon:"🎬", name:"Photo Memory Movies", cat:"Creative",
+    desc:"Ask Photos to create a movie about any person, trip, or topic using a natural language request.",
+    find:"Photos app → Memory Movies → tap the request field → type your prompt",
+    tryIt:"Ask Photos to 'Make a movie of my best moments from this school year' — see what it creates.",
+    discuss:"How could Memory Movies become a student reflection or storytelling tool at the end of a unit?" },
+  { id:11, seed:7, icon:"🎞️", name:"Creator Studio Apps", cat:"Creator",
+    desc:"Keynote, Pages & Numbers get a Liquid Glass redesign + full menu bar in iPadOS 26. Free for all — premium AI features (Generate Presentation, Content Hub, Super Resolution) require Apple Creator Studio subscription.",
+    find:"Update Keynote, Pages, or Numbers in the App Store → open any app → explore the new menu bar in Windowed Apps mode",
+    tryIt:"Open Keynote in Windowed Apps mode, explore the new menu bar, use Format → Editable Shapes to customize a shape.",
+    discuss:"Core apps stay free but AI features now require a subscription. How does this affect how your district plans for these tools?" },
+  { id:12, seed:10, icon:"🖥️", name:"Freeform Updates", cat:"Creator",
+    desc:"Freeform gains fluid section navigation, link-sharing for specific sections, and (for Creator Studio subscribers) AI image generation and a Content Hub.",
+    find:"Open Freeform → tap a section → tap Share → Share Section Link to send just that part",
+    tryIt:"Create a class brainstorm board in Freeform, add content to two sections, share just one section via link.",
+    discuss:"Could Freeform replace Jamboard or Padlet in your classroom? What would it take to make the switch?" },
+  { id:13, seed:3, icon:"🎛️", name:"Windowed Apps + Menu Bar", cat:"Productivity",
+    desc:"iPadOS 26 brings resizable windows, Exposé to see all open apps, and a full Mac-style menu bar at the top of every app.",
+    find:"Settings → Multitasking & Gestures → Windowed Apps → swipe up and pause to open Exposé",
+    tryIt:"Open Notes and Safari side by side, resize both windows, then use the Notes menu bar to find a command you'd normally hunt for.",
+    discuss:"Does a menu bar make iPad feel more like a Mac? Is that a good thing for teachers — or does it change how students work?" },
+  { id:14, seed:14, icon:"📂", name:"Files — Color Folders + Dock Pinning", cat:"Productivity",
+    desc:"Add color to folders in Files to spot them instantly, and pin your most-used folders directly to the Dock.",
+    find:"Files app → tap and hold any folder → Add Color; tap and hold folder → Add to Dock",
+    tryIt:"Color-code your top 4 class folders in Files, then pin your most-used folder to the Dock for instant access.",
+    discuss:"Simple but powerful — how does visual organization in Files compare to how you organize Google Drive?" },
+  { id:15, seed:6, icon:"🔈", name:"Background Sounds", cat:"Productivity",
+    desc:"Personalize your listening environment with background sounds — rain, ocean, stream — to minimize distractions and increase focus. Easier to access in iPadOS 26.",
+    find:"Settings → Accessibility → Audio & Visual → Background Sounds; or add to Control Center for one-tap access",
+    tryIt:"Add Background Sounds to Control Center, then try Rain or Stream during a quiet work period — adjust the volume balance.",
+    discuss:"How could Background Sounds support students with sensory needs, anxiety, or focus challenges?" },
+  { id:16, seed:11, icon:"📓", name:"Journal App", cat:"Productivity",
+    desc:"Journal on iPad lets you record experiences with photos, audio, drawings, and state of mind — great for teacher reflection or student SEL.",
+    find:"App Library → Journal → tap + to create a new entry → add text, photos, audio, or a sketch",
+    tryIt:"Create a Journal entry reflecting on today's lesson — add a photo from your camera roll and a quick voice note.",
+    discuss:"How could daily journaling support teacher wellness or student social-emotional learning? What are the privacy considerations?" }
+];
+
+const rounds = [
+  { id:"r1", name:"Sweet 16", title:"Round 1 — Sweet 16" },
+  { id:"r2", name:"Elite 8",  title:"Round 2 — Elite 8" },
+  { id:"r3", name:"Final Four", title:"Semifinal — Final Four" },
+  { id:"r4", name:"Championship", title:"Championship Round" }
+];
+
+let state = {
+  view: "bracket", round: 0,
+  votes: { r1:{}, r2:{}, r3:{}, r4:{} },
+  brackets: { r1:[], r2:[], r3:[], r4:[] }
+};
+
+state.brackets.r1 = [
+  [features[0],features[1]],[features[2],features[3]],
+  [features[4],features[5]],[features[6],features[7]],
+  [features[8],features[9]],[features[10],features[11]],
+  [features[12],features[13]],[features[14],features[15]]
+];
+
+const allVoted = rid => {
+  const p = state.brackets[rid];
+  return p.length > 0 && p.every((_,i) => state.votes[rid][i] !== undefined);
+};
+const unlocked = ri => ri === 0 || allVoted(rounds[ri-1].id);
+
+function advance(from, to) {
+  const winners = state.brackets[from].map((pair,i) => pair[state.votes[from][i]]).filter(Boolean);
+  const next = [];
+  for (let i = 0; i < winners.length; i += 2)
+    if (winners[i] && winners[i+1]) next.push([winners[i], winners[i+1]]);
+  state.brackets[to] = next;
+}
+
+function getWins(fid) {
+  let w = 0;
+  ['r1','r2','r3','r4'].forEach(rid => {
+    Object.entries(state.votes[rid]).forEach(([mi,fi]) => {
+      const p = state.brackets[rid][+mi];
+      if (p && p[fi] && p[fi].id === fid) w++;
+    });
+  });
+  return w;
+}
+
+function getStatus(fid) {
+  let lastRi = -1;
+  ['r1','r2','r3','r4'].forEach((rid,ri) => {
+    if (state.brackets[rid].some(p => p.some(f => f.id === fid))) lastRi = ri;
+  });
+  if (lastRi === -1) return 'out';
+  const rid = rounds[lastRi].id;
+  const pi = state.brackets[rid].findIndex(p => p.some(f => f.id === fid));
+  if (pi === -1) return 'out';
+  const v = state.votes[rid][pi];
+  if (v === undefined) return 'active';
+  return state.brackets[rid][pi][v].id === fid ? (rid === 'r4' ? 'champ' : 'active') : 'out';
+}
+
+function castVote(rid, mi, fi) {
+  state.votes[rid][mi] = fi;
+  if (allVoted(rid)) {
+    const nx = { r1:'r2', r2:'r3', r3:'r4' };
+    if (nx[rid]) advance(rid, nx[rid]);
+  }
+  render();
+}
+
+function goView(v) { state.view = v; render(); }
+function goRound(i) { if (unlocked(i)) { state.round = i; render(); } }
+function restart() {
+  state = { view:"bracket", round:0, votes:{r1:{},r2:{},r3:{},r4:{}}, brackets:{r1:[],r2:[],r3:[],r4:{}} };
+  state.brackets.r1 = [
+    [features[0],features[1]],[features[2],features[3]],
+    [features[4],features[5]],[features[6],features[7]],
+    [features[8],features[9]],[features[10],features[11]],
+    [features[12],features[13]],[features[14],features[15]]
+  ];
+  render();
+}
+
+function renderNav() {
+  document.getElementById('nav').innerHTML =
+    `<button class="ntab ${state.view==='bracket'?'active':''}" onclick="goView('bracket')">Bracket</button>` +
+    `<button class="ntab ${state.view==='lb'?'active':''}" onclick="goView('lb')">Leaderboard</button>` +
+    rounds.map((r,i) => `<button class="ntab ${state.view==='bracket'&&state.round===i?'active':''}" ${!unlocked(i)?'disabled':''} onclick="goRound(${i})">${r.name}</button>`).join('');
+}
+
+function renderProgress() {
+  const completedRounds = ['r1','r2','r3','r4'].filter(rid => allVoted(rid)).length;
+  document.getElementById('progressDots').innerHTML =
+    rounds.map((_,i) => `<div class="pdot ${i < completedRounds ? 'done' : i === state.round && state.view==='bracket' ? 'current' : ''}"></div>`).join('');
+}
+
+function renderBracket() {
+  const r = rounds[state.round];
+  document.getElementById('roundTitle').textContent = r.title;
+  const pairs = state.brackets[r.id] || [];
+
+  if (state.round === 3 && allVoted('r4') && pairs.length > 0) {
+    const champ = pairs[0][state.votes.r4[0]];
+    return `<div class="champ-view">
+      <div class="trophy-ring">🏆</div>
+      <div class="champ-name">${champ.icon} ${champ.name}</div>
+      <div class="champ-sub">Your iPadOS 26 Champion · ${champ.cat}</div>
+      <div class="champ-detail-grid">
+        <div class="champ-detail cd-blue"><strong>Find it</strong>${champ.find}</div>
+        <div class="champ-detail cd-amber"><strong>Try it</strong>${champ.tryIt}</div>
+      </div>
+      <p style="font-size:13px;color:#5F5E5A;max-width:420px;margin:0 auto 1.25rem;line-height:1.6;">${champ.discuss}</p>
+      <button class="restart-btn" onclick="restart()">↩ Play again</button>
+    </div>`;
+  }
+
+  if (pairs.length === 0) {
+    return `<div class="locked"><span class="lock-icon">🔒</span>Finish voting in the previous round to unlock this bracket.</div>`;
+  }
+
+  const hasCreator = pairs.some(pair => pair.some(f => f.cat === 'Creator'));
+  const creatorNote = hasCreator ? `<div class="creator-notice"><span class="icon">💡</span><span><strong>Creator Studio note:</strong> Keynote, Pages, Numbers, and Freeform got a Liquid Glass redesign and full menu bar — free for everyone. Premium AI features like Generate Presentation and Content Hub require an Apple Creator Studio subscription. A great conversation to have with your district.</span></div>` : '';
+
+  const matchupsHTML = pairs.map((pair, mi) => {
+    const rid = r.id, voted = state.votes[rid][mi];
+    return `<div class="mcard">
+      <div class="mcard-head">
+        <span class="matchup-num">MATCHUP ${mi+1}</span>
+        <span class="vs-pill">VS</span>
+        <span class="mcat">${pair[0].cat}</span>
+      </div>
+      ${pair.map((f,fi) => `
+        <div class="fslot ${voted===fi?(allVoted(rid)?'winner':'selected'):''}">
+          <div class="f-top">
+            <span class="seed">#${f.seed}</span>
+            <span class="ficon">${f.icon}</span>
+            <span class="fname">${f.name}</span>
+            <span class="cat-pill cat-${f.cat.replace(/\s/g,'')}">${f.cat}</span>
+          </div>
+          <div class="fdesc">${f.desc}</div>
+          <div class="fmeta">
+            <div class="meta-row m-find"><strong>Find it:</strong> ${f.find}</div>
+            <div class="meta-row m-try"><strong>Try it:</strong> ${f.tryIt}</div>
+          </div>
+        </div>
+      `).join('<div class="vs-divider">— VS —</div>')}
+      <div class="discuss-sec">
+        <div class="discuss-label">Discussion prompt</div>
+        <div class="discuss-q">${pair[0].discuss}</div>
+      </div>
+      <div class="vote-row">
+        ${pair.map((f,fi) => `<button class="vbtn ${voted===fi?'voted':''}" onclick="castVote('${rid}',${mi},${fi})">${voted===fi?'✓ Voted':'Vote: '+f.icon+' '+f.name.split(' ').slice(0,2).join(' ')}</button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  const advBtn = allVoted(r.id) && state.round < 3
+    ? `<div class="adv-bar"><button class="adv-btn" onclick="goRound(${state.round+1})">Advance to ${rounds[state.round+1].name} →</button></div>`
+    : '';
+
+  return creatorNote + `<div class="mgrid">${matchupsHTML}</div>${advBtn}`;
+}
+
+function renderLB() {
+  document.getElementById('roundTitle').textContent = 'Feature standings';
+  const ranked = features.map(f => ({ ...f, wins: getWins(f.id), status: getStatus(f.id) }))
+    .sort((a,b) => b.wins - a.wins || a.seed - b.seed);
+  const medals = ['🥇','🥈','🥉'];
+  return `<div class="lb-card">
+    <div class="lb-head"><h2>Leaderboard</h2><p>Updated as you vote through each round</p></div>
+    ${ranked.map((f,i) => `
+      <div class="lb-row">
+        <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':'num'}">${i<3?medals[i]:i+1}</div>
+        <div class="lb-info">
+          <div class="lb-fn">${f.icon} ${f.name}</div>
+          <div class="lb-fc">${f.cat} · Seed #${f.seed} · ${f.wins} win${f.wins!==1?'s':''}</div>
+        </div>
+        <div class="lb-wins">${[0,1,2,3].map(w=>`<div class="${f.wins>w?'wd':'we'}"></div>`).join('')}</div>
+        <div class="lb-status ${f.status==='champ'?'st-champ':f.status==='active'?'st-in':'st-out'}">${f.status==='champ'?'Champion':f.status==='active'?'Still in':'Eliminated'}</div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function render() {
+  renderNav();
+  renderProgress();
+  document.getElementById('main').innerHTML = state.view === 'lb' ? renderLB() : renderBracket();
+}
+
+render();
+</script>
+</body>
+</html>
